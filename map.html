@@ -17,7 +17,7 @@
 
   .panel{
     position:absolute;top:16px;left:16px;z-index:1000;width:310px;max-width:calc(100vw - 32px);
-    background:rgba(22,25,34,.94);border:1px solid var(--border);border-radius:12px;
+    background:rgba(22,25,34,.94);border:1px solid var(--border);
     padding:18px 18px 16px;box-shadow:0 12px 40px rgba(0,0,0,.5);backdrop-filter:blur(6px);
   }
   .back{display:inline-block;font-size:12px;color:var(--ink-2);text-decoration:none;margin-bottom:12px;}
@@ -28,30 +28,30 @@
   .modes{display:flex;flex-direction:column;gap:6px;margin-bottom:16px;}
   .mode{
     display:flex;align-items:center;gap:9px;padding:9px 11px;border:1px solid var(--border);
-    border-radius:8px;background:var(--panel-2);cursor:pointer;font-size:13px;font-weight:600;transition:.12s;
+    background:var(--panel-2);cursor:pointer;font-size:13px;font-weight:600;transition:.12s;
   }
   .mode:hover{border-color:#3a4256;}
   .mode.active{border-color:var(--jam);background:rgba(31,157,63,.14);color:#fff;}
-  .mode .dot{width:9px;height:9px;border-radius:50%;background:var(--ink-2);flex-shrink:0;}
+  .mode .dot{width:9px;height:9px;background:var(--ink-2);flex-shrink:0;}
   .mode.active .dot{background:var(--jam);}
 
   .legend{border-top:1px solid var(--border);padding-top:14px;}
   .legend .lg-title{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2);margin-bottom:10px;}
   .legend .row{display:flex;align-items:center;gap:9px;font-size:12.5px;color:var(--ink);margin-bottom:7px;}
-  .legend .sw{width:15px;height:15px;border-radius:4px;flex-shrink:0;border:1px solid rgba(255,255,255,.12);}
+  .legend .sw{width:15px;height:15px;flex-shrink:0;border:1px solid rgba(255,255,255,.12);}
   .legend .cnt{margin-left:auto;color:var(--ink-2);font-variant-numeric:tabular-nums;}
 
   .detail{
     position:absolute;top:16px;right:16px;z-index:1000;width:250px;max-width:calc(100vw - 32px);
-    background:rgba(22,25,34,.94);border:1px solid var(--border);border-radius:12px;padding:16px 18px;
+    background:rgba(22,25,34,.94);border:1px solid var(--border);padding:16px 18px;
     box-shadow:0 12px 40px rgba(0,0,0,.5);backdrop-filter:blur(6px);font-size:13px;
   }
   .detail h3{font-size:15px;font-weight:800;margin-bottom:10px;}
   .detail .placeholder{color:var(--ink-2);font-size:12.5px;}
   .detail .kv{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.06);}
   .detail .kv .k{color:var(--ink-2);} .detail .kv .v{font-weight:700;font-variant-numeric:tabular-nums;}
-  .badge{display:inline-block;padding:2px 9px;border-radius:999px;font-size:11px;font-weight:700;color:#fff;margin-top:2px;}
-  .flipnote{margin-top:10px;font-size:11.5px;color:#ffd; background:rgba(31,157,63,.16);border:1px solid rgba(31,157,63,.4);border-radius:7px;padding:7px 9px;line-height:1.4;}
+  .badge{display:inline-block;padding:2px 9px;font-size:11px;font-weight:700;color:#fff;margin-top:2px;}
+  .flipnote{margin-top:10px;font-size:11.5px;color:#ffd; background:rgba(31,157,63,.16);border:1px solid rgba(31,157,63,.4);padding:7px 9px;line-height:1.4;}
 
   .leaflet-interactive{transition:fill-opacity .1s;}
   .detail{display:none;}   /* hidden by default; shown only when wide enough */
@@ -75,19 +75,19 @@
 <div class="panel">
   <a class="back" href="index.html">← Back to the analysis</a>
   <h1>Mapping the women's vote</h1>
-  <div class="sub">Every constituency, coloured three ways. Switch the view:</div>
+  <div class="sub">Every seat, shown four ways. Tap to change the view:</div>
   <div class="modes" id="modes">
     <div class="mode active" data-mode="winner"><span class="dot"></span>Who won the seat</div>
-    <div class="mode" data-mode="femadv"><span class="dot"></span>Jamaat's female advantage</div>
-    <div class="mode" data-mode="jamshare"><span class="dot"></span>Jamaat vote share</div>
-    <div class="mode" data-mode="flip"><span class="dot"></span>Seats women flip to Jamaat</div>
+    <div class="mode" data-mode="femadv"><span class="dot"></span>Jamaat's gain with women</div>
+    <div class="mode" data-mode="jamshare"><span class="dot"></span>Jamaat's vote share</div>
+    <div class="mode" data-mode="flip"><span class="dot"></span>Seats women move to Jamaat</div>
   </div>
   <div class="legend" id="legend"></div>
 </div>
 
 <div class="detail" id="detail">
-  <h3>Hover a seat</h3>
-  <div class="placeholder">Move over any constituency to see its result and how men and women voted.</div>
+  <h3>Point at a seat</h3>
+  <div class="placeholder">Move your mouse over any seat to see its result and how men and women voted.</div>
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -132,8 +132,8 @@ const LEGENDS = {
   winner:{title:'Seat winner', rows:[
     ['BNP',PARTY_COLORS.BNP],['Jamaat',PARTY_COLORS.Jamaat],['NCP',PARTY_COLORS.NCP],
     ['Islami Andolan',PARTY_COLORS['Islami Andolan']],['Other / independent',PARTY_COLORS.Other]]},
-  femadv:{title:'Women minus men, Jamaat share', rows:[
-    ['Men favoured Jamaat more','#6a4bc4'],['≈ even','#6b7280'],
+  femadv:{title:'How much more women gave Jamaat', rows:[
+    ['Men gave Jamaat more','#6a4bc4'],['About the same','#6b7280'],
     ['+0–2 pts (women)','#a7d9a0'],['+2–4 pts','#5fb85a'],['+4–6 pts','#2f9d3f'],['+6 pts or more','#127a2b']]},
   jamshare:{title:'Jamaat vote share', rows:[
     ['under 10%','#e8f3e6'],['10–20%','#b7dfb0'],['20–30%','#7cc677'],['30–40%','#43ab48'],
