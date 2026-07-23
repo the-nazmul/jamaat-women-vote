@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>How Jamaat Won the Women's Vote — Bangladesh Election Analysis</title>
+<style>
+  :root {
+    color-scheme: light;
+    --plane:        #f9f9f7;
+    --surface:      #fcfcfb;
+    --ink:          #0b0b0b;
+    --ink-2:        #52514e;
+    --muted:        #898781;
+    --grid:         #e1e0d9;
+    --baseline:     #c3c2b7;
+    --border:       rgba(11,11,11,0.10);
+    --men:          #2a78d6;   /* categorical slot 1 — blue */
+    --women:        #d64a86;   /* magenta, darkened for label legibility */
+    --women-soft:   #e87ba4;
+    --accent:       #008300;   /* green — "gain" */
+    --bnp:          #2a78d6;
+    --jam:          #1f9d3f;
+    --other-c:      #8b8f99;
+    --shadow:       0 1px 3px rgba(0,0,0,.06), 0 8px 30px rgba(0,0,0,.05);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:where(:not([data-theme="light"])) {
+      color-scheme: dark;
+      --plane:      #0d0d0d;
+      --surface:    #1a1a19;
+      --ink:        #ffffff;
+      --ink-2:      #c3c2b7;
+      --muted:      #898781;
+      --grid:       #2c2c2a;
+      --baseline:   #383835;
+      --border:     rgba(255,255,255,0.10);
+      --men:        #3987e5;
+      --women:      #d55181;
+      --women-soft: #d55181;
+      --accent:     #0ca30c;
+      --bnp:        #3987e5;
+      --jam:        #2bb14e;
+      --other-c:    #8b8f99;
+      --shadow:     0 1px 3px rgba(0,0,0,.4), 0 8px 30px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --plane:      #0d0d0d;
+    --surface:    #1a1a19;
+    --ink:        #ffffff;
+    --ink-2:      #c3c2b7;
+    --muted:      #898781;
+    --grid:       #2c2c2a;
+    --baseline:   #383835;
+    --border:     rgba(255,255,255,0.10);
+    --men:        #3987e5;
+    --women:      #d55181;
+    --women-soft: #d55181;
+    --accent:     #0ca30c;
+    --bnp:        #3987e5;
+    --jam:        #2bb14e;
+    --other-c:    #8b8f99;
+    --shadow:     0 1px 3px rgba(0,0,0,.4), 0 8px 30px rgba(0,0,0,.35);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--plane);
+    color: var(--ink);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap { max-width: 920px; margin: 0 auto; padding: 0 24px; }
+
+  /* ---- theme toggle ---- */
+  .toggle {
+    position: fixed; top: 16px; right: 16px; z-index: 100;
+    background: var(--surface); border: 1px solid var(--border);
+    color: var(--ink-2); border-radius: 999px; padding: 7px 14px;
+    font-size: 12.5px; font-weight: 600; cursor: pointer; box-shadow: var(--shadow);
+  }
+  .toggle:hover { color: var(--ink); }
+
+  /* ---- hero ---- */
+  .hero { padding: 92px 0 40px; }
+  .kicker {
+    display: inline-block; font-size: 12.5px; font-weight: 700; letter-spacing: .09em;
+    text-transform: uppercase; color: var(--women); margin-bottom: 20px;
+  }
+  h1 {
+    font-size: clamp(30px, 5.4vw, 52px); font-weight: 800; letter-spacing: -0.02em;
+    line-height: 1.08; margin-bottom: 22px;
+  }
+  h1 em { font-style: normal; color: var(--women); }
+  .standfirst { font-size: clamp(16px, 2.2vw, 19px); color: var(--ink-2); max-width: 680px; }
+
+  .hero-stats { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 40px; }
+  .stat {
+    flex: 1 1 150px; background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 18px 20px; box-shadow: var(--shadow);
+  }
+  .stat .num { font-size: 34px; font-weight: 800; letter-spacing: -0.02em; line-height: 1; }
+  .stat .num.gain { color: var(--accent); }
+  .stat .lbl { font-size: 12.5px; color: var(--ink-2); margin-top: 8px; line-height: 1.4; }
+
+  /* ---- sections ---- */
+  section.block { padding: 46px 0; border-top: 1px solid var(--grid); }
+  .eyebrow {
+    font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 12px;
+  }
+  h2 { font-size: clamp(23px, 3.4vw, 31px); font-weight: 800; letter-spacing: -0.015em; line-height: 1.15; margin-bottom: 16px; }
+  .lede { font-size: 16.5px; color: var(--ink-2); max-width: 660px; margin-bottom: 8px; }
+  .lede strong { color: var(--ink); font-weight: 700; }
+
+  figure {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+    padding: 24px 22px 18px; margin-top: 26px; box-shadow: var(--shadow);
+  }
+  figcaption { font-size: 15px; font-weight: 700; margin-bottom: 2px; }
+  .fig-sub { font-size: 13px; color: var(--ink-2); margin-bottom: 16px; }
+  .fig-note { font-size: 12px; color: var(--muted); margin-top: 14px; }
+
+  .legend { display: flex; gap: 18px; flex-wrap: wrap; margin-bottom: 14px; }
+  .legend .item { display: flex; align-items: center; gap: 7px; font-size: 13px; color: var(--ink-2); font-weight: 600; }
+  .swatch { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
+
+  svg { display: block; width: 100%; height: auto; overflow: visible; }
+  .axis-label { fill: var(--muted); font-size: 12px; }
+  .val-label { fill: var(--ink); font-size: 12.5px; font-weight: 700; }
+  .tick-line { stroke: var(--grid); stroke-width: 1; }
+  .baseline { stroke: var(--baseline); stroke-width: 1.5; }
+  .cat-label { fill: var(--ink-2); font-size: 13px; font-weight: 600; }
+
+  /* inline map */
+  .mapframe {
+    margin-top: 26px; border: 1px solid var(--border); border-radius: 14px; overflow: hidden;
+    box-shadow: var(--shadow); background: #0d0d0d;
+  }
+  .mapframe iframe { display: block; width: 100%; height: 620px; border: 0; }
+  .map-actions { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-top: 12px; }
+  .map-hint { font-size: 12.5px; color: var(--muted); }
+  .map-open { font-size: 13px; font-weight: 700; color: var(--jam); text-decoration: none; white-space: nowrap; }
+  .map-open:hover { text-decoration: underline; }
+  @media (max-width: 640px){ .mapframe iframe { height: 460px; } }
+
+  /* tooltip */
+  .tt {
+    position: fixed; pointer-events: none; z-index: 200; opacity: 0;
+    background: var(--ink); color: var(--plane); padding: 8px 11px; border-radius: 8px;
+    font-size: 12.5px; line-height: 1.45; box-shadow: 0 6px 20px rgba(0,0,0,.3);
+    transition: opacity .1s; max-width: 240px;
+  }
+  .tt b { color: #fff; }
+  :root[data-theme="dark"] .tt, :root:where(:not([data-theme="light"])) .tt { color: #0d0d0d; }
+  :root[data-theme="dark"] .tt b { color: #000; }
+
+  .takeaways { list-style: none; display: grid; gap: 14px; margin-top: 8px; }
+  .takeaways li {
+    background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--women);
+    border-radius: 10px; padding: 16px 18px; font-size: 15.5px; color: var(--ink-2);
+  }
+  .takeaways li strong { color: var(--ink); }
+
+  footer { padding: 40px 0 70px; border-top: 1px solid var(--grid); color: var(--muted); font-size: 13px; }
+  footer code { background: var(--surface); padding: 2px 6px; border-radius: 5px; border: 1px solid var(--border); font-size: 12px; }
+
+  .hl { background: linear-gradient(transparent 62%, color-mix(in srgb, var(--women) 26%, transparent) 62%); padding: 0 2px; font-weight: 700; color: var(--ink); }
+</style>
+</head>
+<body>
+<button class="toggle" id="themeToggle">◐ Theme</button>
+
+<div class="wrap">
+
+  <!-- HERO -->
+  <header class="hero">
+    <span class="kicker">Bangladesh National Election · Gender analysis</span>
+    <h1>Jamaat's quiet advantage: <em>the women's vote</em></h1>
+    <p class="standfirst">
+      Bangladesh runs many polling stations segregated by sex. By matching each men's centre to the
+      women's centre <em>at the very same building</em> — 2,453 such pairs — we can compare how men and
+      women at the identical spot voted, with geography held constant. One party consistently did better
+      with women. It wasn't the BNP. It was Jamaat-e-Islami.
+    </p>
+
+    <div class="hero-stats">
+      <div class="stat"><div class="num">32.8%</div><div class="lbl">Jamaat's share on the women's side of paired stations</div></div>
+      <div class="stat"><div class="num">31.2%</div><div class="lbl">Jamaat's share on the men's side of the same stations</div></div>
+      <div class="stat"><div class="num gain">+1.6<span style="font-size:20px">pts</span></div><div class="lbl">Jamaat's female advantage — the only major party to gain among women</div></div>
+    </div>
+  </header>
+
+  <!-- OVERVIEW -->
+  <section class="block">
+    <div class="eyebrow">Overview · the election</div>
+    <h2>A BNP majority, a Jamaat surge</h2>
+    <p class="lede">
+      The BNP won the national election comfortably — <strong>211 seats</strong> on just over half the vote —
+      with Jamaat-e-Islami the clear runner-up at <strong>67 seats</strong>. This piece isn't about who won.
+      It's about a quieter pattern underneath the result: how men and women voted differently.
+    </p>
+    <div class="hero-stats" style="margin-top:26px">
+      <div class="stat"><div class="num" style="color:var(--bnp)">211</div><div class="lbl">Seats won by the BNP · 50.1% of the vote</div></div>
+      <div class="stat"><div class="num" style="color:var(--jam)">67</div><div class="lbl">Seats won by Jamaat · 31.5% of the vote</div></div>
+      <div class="stat"><div class="num">124.8M</div><div class="lbl">Registered voters across ~300 constituencies</div></div>
+    </div>
+
+    <div class="eyebrow" style="margin-top:40px">Overview · the data</div>
+    <h2>How a quarter of the country lets us see gender</h2>
+    <p class="lede">
+      In much of Bangladesh, men and women vote at <strong>separate polling centres</strong>. Those single-sex
+      centres are only about a quarter of all centres — but they're the only places a ballot can be tied to a
+      voter's sex. The other three-quarters are mixed and tell us nothing about gender.
+    </p>
+    <div class="hero-stats" style="margin-top:26px">
+      <div class="stat"><div class="num">42,382</div><div class="lbl">Total polling centres nationwide</div></div>
+      <div class="stat"><div class="num">26%</div><div class="lbl">Are single-sex — 11,096 centres, 25% of the electorate</div></div>
+      <div class="stat"><div class="num">74%</div><div class="lbl">Are mixed — no way to split votes by sex</div></div>
+    </div>
+
+    <div class="eyebrow" style="margin-top:40px">Overview · the method</div>
+    <h2>Same-station pairs, so geography can't fool us</h2>
+    <p class="lede">
+      A naïve comparison — all women's centres vs all men's centres — risks confounding sex with place, since
+      a lone women's centre might sit in different terrain than a lone men's one. So we go stricter: we match
+      each men's centre to the women's centre <strong>in the very same building</strong> and compare only within
+      those pairs. Same village, same street, same electorate — the <em>only</em> thing that differs is who cast
+      the ballot. Every number in this piece is built from these <strong>2,453 matched pairs</strong>.
+    </p>
+    <div class="hero-stats" style="margin-top:26px">
+      <div class="stat"><div class="num">2,453</div><div class="lbl">Same-building male ↔ female centre pairs</div></div>
+      <div class="stat"><div class="num">8.1M</div><div class="lbl">Ballots inside matched pairs (4.3M men, 3.9M women)</div></div>
+      <div class="stat"><div class="num">275</div><div class="lbl">Constituencies with at least one matched pair</div></div>
+    </div>
+    <p class="lede" style="margin-top:20px">
+      One honest caveat throughout: the <em>typical</em> paired station shows almost no gender gap (the median is
+      ~0). The advantage below is a real aggregate lift, but it's <strong>concentrated</strong> in specific
+      places — chiefly Jamaat's south-western strongholds — not a uniform national swing.
+    </p>
+  </section>
+
+  <!-- CHART 1: headline grouped bars -->
+  <section class="block">
+    <div class="eyebrow">The headline</div>
+    <h2>BNP splits evenly by sex. Jamaat doesn't.</h2>
+    <p class="lede">
+      Across the matched pairs, the BNP's share is identical among men and women — a broad, gender-neutral
+      coalition. Jamaat's is <strong>1.6 points higher among women</strong>, closing part of its gap with the BNP.
+    </p>
+    <figure>
+      <figcaption>Vote share, men's vs women's side of the same stations</figcaption>
+      <div class="fig-sub">Share of valid votes across 2,453 same-building pairs</div>
+      <div class="legend">
+        <div class="item"><span class="swatch" style="background:var(--men)"></span>Men's side</div>
+        <div class="item"><span class="swatch" style="background:var(--women)"></span>Women's side</div>
+      </div>
+      <div id="c-shares"></div>
+    </figure>
+  </section>
+
+  <!-- CHART 2: dumbbell shift -->
+  <section class="block">
+    <div class="eyebrow">Jamaat stands alone</div>
+    <h2>Every other party lost ground among women</h2>
+    <p class="lede">
+      This isn't a general "religious parties do better with women" story. The other Islamist party on the
+      ballot — Islami Andolan (Hand Fan) — actually did <strong>worse</strong> among women. So did the NCP and
+      the rest. <span class="hl">Jamaat is the only party whose share rises from the men's to the women's side of the same station.</span>
+    </p>
+    <figure>
+      <figcaption>Men's side → women's side, by party</figcaption>
+      <div class="fig-sub">Each line runs from a party's share among men to its share among women, within matched pairs</div>
+      <div class="legend">
+        <div class="item"><span class="swatch" style="background:var(--men);border-radius:999px"></span>Men's share</div>
+        <div class="item"><span class="swatch" style="background:var(--women);border-radius:999px"></span>Women's share</div>
+        <div class="item"><span class="swatch" style="background:var(--accent);border-radius:999px"></span>Gained among women</div>
+      </div>
+      <div id="c-shift"></div>
+    </figure>
+  </section>
+
+  <!-- CHART 3: Khulna belt -->
+  <section class="block">
+    <div class="eyebrow">Where it concentrates</div>
+    <h2>In the south-west, women handed Jamaat a majority</h2>
+    <p class="lede">
+      The female advantage is not spread evenly. In the Jessore–Satkhira–Jhenaidah belt — Jamaat's historic
+      heartland — the party climbs from 46% among men to <strong>a 52% outright majority among women</strong>,
+      a swing more than six times larger than in the rest of the country.
+    </p>
+    <figure>
+      <figcaption>Jamaat vote share: south-west Khulna belt vs. rest of country</figcaption>
+      <div class="fig-sub">Share of valid votes, within same-station pairs</div>
+      <div class="legend">
+        <div class="item"><span class="swatch" style="background:var(--men)"></span>Men's centres</div>
+        <div class="item"><span class="swatch" style="background:var(--women)"></span>Women's centres</div>
+      </div>
+      <div id="c-belt"></div>
+    </figure>
+  </section>
+
+  <!-- CHART 4: top constituencies dumbbell -->
+  <section class="block">
+    <div class="eyebrow">The extremes</div>
+    <h2>The 12 seats where women moved most to Jamaat</h2>
+    <p class="lede">
+      In Jessore-1, Jamaat took 52% of the men's vote — and <strong>65% of the women's</strong>, a gap of
+      13 points. The steepest female swings cluster tightly in the south-western districts.
+    </p>
+    <figure>
+      <figcaption>Jamaat's female advantage — top 12 constituencies</figcaption>
+      <div class="fig-sub">Men's side → women's side within each constituency (matched pairs)</div>
+      <div id="c-top"></div>
+    </figure>
+  </section>
+
+  <!-- CHART 5: scatter -->
+  <section class="block">
+    <div class="eyebrow">The whole picture</div>
+    <h2>Above the line, Jamaat did better with women</h2>
+    <p class="lede">
+      Each dot is a constituency: its men's-side Jamaat share on the horizontal, women's-side on the vertical.
+      Dots above the diagonal mean Jamaat outperformed among women. <strong>The cloud sits just above
+      the line</strong> — a lean, not a chasm — and the further right you go, into Jamaat's strongholds, the higher it floats.
+    </p>
+    <figure>
+      <figcaption>Jamaat share: men's side vs. women's side, by constituency</figcaption>
+      <div class="fig-sub">Each point is one of 210 constituencies with ≥4 matched pairs · dashed line = equal support</div>
+      <div id="c-scatter"></div>
+    </figure>
+  </section>
+
+  <!-- CHART 6: district bars -->
+  <section class="block">
+    <div class="eyebrow">District ranking</div>
+    <h2>The female advantage, district by district</h2>
+    <p class="lede">
+      Positive bars (green) are districts where Jamaat did better among women; the south-western districts
+      dominate the top. Only a handful of districts — mostly in Chattogram and the north — lean the other way.
+    </p>
+    <figure>
+      <figcaption>Jamaat's women-minus-men vote share, by district</figcaption>
+      <div class="fig-sub">Percentage-point gap within matched pairs · districts with ≥6 pairs · scroll for full list</div>
+      <div style="max-height:560px; overflow-y:auto; overflow-x:hidden; margin:0 -6px; padding:0 6px">
+        <div id="c-district"></div>
+      </div>
+    </figure>
+  </section>
+
+  <!-- TURNOUT -->
+  <section class="block">
+    <div class="eyebrow">The paradox</div>
+    <h2>And women did it while turning out less</h2>
+    <p class="lede">
+      Women's turnout ran nearly 5 points below men's. Jamaat's female edge is not a turnout artefact —
+      a smaller female electorate still leaned <em>more</em> its way, which makes the pattern about preference,
+      not participation.
+    </p>
+    <div class="hero-stats" style="margin-top:26px">
+      <div class="stat"><div class="num" style="color:var(--men)">57.7%</div><div class="lbl">Turnout, men's side of pairs</div></div>
+      <div class="stat"><div class="num" style="color:var(--women)">53.0%</div><div class="lbl">Turnout, women's side of pairs</div></div>
+      <div class="stat"><div class="num">26.9%</div><div class="lbl">Women's sides where Jamaat outpolled the BNP <span style="color:var(--muted)">(vs 24.8% of men's)</span></div></div>
+    </div>
+  </section>
+
+  <!-- MAP -->
+  <section class="block">
+    <div class="eyebrow">Geography</div>
+    <h2>See the whole map</h2>
+    <p class="lede">
+      The female advantage has a shape — a solid green wedge across the south-west, fading toward the
+      east. Open the interactive map to switch between who won each seat, Jamaat's female advantage, its
+      raw vote share, and the seats women alone would flip.
+    </p>
+    <div class="mapframe">
+      <iframe src="map.html" title="Interactive constituency map" loading="lazy"></iframe>
+    </div>
+    <div class="map-actions">
+      <div class="map-hint">Use the panel inside the map to switch views · hover any seat for its men's vs women's result</div>
+      <a class="map-open" href="map.html" target="_blank" rel="noopener">Open full screen ↗</a>
+    </div>
+  </section>
+
+  <!-- OVERALL PERFORMANCE -->
+  <section class="block">
+    <div class="eyebrow">The bigger contest</div>
+    <h2>Two parties, two very different victories</h2>
+    <p class="lede">
+      Step back from gender for a moment. Nationally the BNP won a commanding majority — <strong>211 seats</strong>
+      to Jamaat's <strong>67</strong> — on just over half the vote. But <em>how</em> each party won looks nothing alike.
+    </p>
+    <figure>
+      <figcaption>Seats won &amp; national vote share</figcaption>
+      <div class="fig-sub">297 declared seats · vote share is of all votes cast</div>
+      <div class="legend">
+        <div class="item"><span class="swatch" style="background:var(--bnp)"></span>BNP</div>
+        <div class="item"><span class="swatch" style="background:var(--jam)"></span>Jamaat</div>
+        <div class="item"><span class="swatch" style="background:var(--other-c)"></span>Others (NCP, IAB, ind.)</div>
+      </div>
+      <div id="c-seats"></div>
+    </figure>
+  </section>
+
+  <!-- WON-SEAT MARGINS -->
+  <section class="block">
+    <div class="eyebrow">Landslides vs squeakers</div>
+    <h2>BNP wins big. Jamaat wins narrow.</h2>
+    <p class="lede">
+      Where the BNP wins, it wins by an average of <strong>30 points</strong>. Where Jamaat wins, the average
+      margin is just <strong>13 points</strong> — and <strong>19 of its 67 seats</strong> were taken by under 5 points.
+      Those tight wins are exactly where a couple of points of female support decides the seat.
+    </p>
+    <figure>
+      <figcaption>Winner's share vs. runner-up's share, in each party's won seats</figcaption>
+      <div class="fig-sub">Average across all seats a party won · gap = victory margin</div>
+      <div class="legend">
+        <div class="item"><span class="swatch" style="background:var(--ink-2);border-radius:999px"></span>Winner's share</div>
+        <div class="item"><span class="swatch" style="background:var(--muted);border-radius:999px"></span>Runner-up's share</div>
+      </div>
+      <div id="c-margin"></div>
+    </figure>
+  </section>
+
+  <!-- TWO PARLIAMENTS -->
+  <section class="block">
+    <div class="eyebrow">The decisive twist</div>
+    <h2>A "women's parliament" seats more Jamaat</h2>
+    <p class="lede">
+      Tally each seat by its matched pairs alone. On men's votes, Jamaat leads in 46 seats; on women's
+      votes, <strong>55</strong>. <span class="hl">In 11 constituencies the men's side picks BNP but the women's side picks Jamaat</span>
+      — against just 2 going the other way. Women don't change who runs the country, but they measurably enlarge Jamaat's bloc.
+    </p>
+    <figure>
+      <figcaption>Seats led by each party — if only men, or only women, had voted</figcaption>
+      <div class="fig-sub">Two-party lead within matched pairs · 210 constituencies (≥4 pairs)</div>
+      <div class="legend">
+        <div class="item"><span class="swatch" style="background:var(--bnp)"></span>BNP leads</div>
+        <div class="item"><span class="swatch" style="background:var(--jam)"></span>Jamaat leads</div>
+      </div>
+      <div id="c-parl"></div>
+    </figure>
+    <figure>
+      <figcaption>The 11 seats women hand to Jamaat</figcaption>
+      <div class="fig-sub">Women's-side vote share · Jamaat (magenta) overtakes BNP (blue) among women</div>
+      <div id="c-flip"></div>
+      <div class="fig-note">In every seat shown, BNP leads the men's side — but trails among women.</div>
+    </figure>
+  </section>
+
+  <!-- WOMEN'S ROLE IN WON SEATS -->
+  <section class="block">
+    <div class="eyebrow">Where women mattered most</div>
+    <h2>Jamaat won exactly where women leaned hardest</h2>
+    <p class="lede">
+      Here's the tell. Across all seats, women lifted Jamaat by <strong>1.4 points</strong>. But in the seats Jamaat
+      actually <em>won</em>, women lifted it by <strong>3.7 points — over two and a half times as much</strong>, and boosted
+      Jamaat in 82% of them. In those seats women carried Jamaat from a 49% plurality among men to a <strong>53% majority</strong>.
+      The women's swing isn't incidental to Jamaat's wins — it's concentrated in them.
+    </p>
+    <figure>
+      <figcaption>Jamaat's female advantage, grouped by who won the seat</figcaption>
+      <div class="fig-sub">Women's-side minus men's-side Jamaat share, within matched pairs (percentage points)</div>
+      <div id="c-wonadv"></div>
+      <div class="fig-note">Hover a bar to see Jamaat's men's- vs women's-side share in that group.</div>
+    </figure>
+  </section>
+
+  <!-- TAKEAWAYS -->
+  <section class="block">
+    <div class="eyebrow">For the deck</div>
+    <h2>Things to say out loud</h2>
+    <ul class="takeaways">
+      <li><strong>Measured cleanly — same building, men vs women.</strong> 2,453 same-station pairs, so the gender gap can't be geography in disguise.</li>
+      <li><strong>Jamaat is the only major party that gained among women</strong> — +1.6 points, while BNP stayed flat and every other party slipped.</li>
+      <li><strong>It's Jamaat-specific, not Islamist-generic.</strong> The other religious party, Islami Andolan, did worse with women.</li>
+      <li><strong>Concentrated, not universal.</strong> The median seat shows ~0 gap; the lift comes from the south-west — the Khulna belt swings +5.7 pts (women push Jamaat past 50%) vs +0.9 elsewhere.</li>
+      <li><strong>Lower female turnout, higher female support.</strong> The edge is about preference, not participation.</li>
+      <li><strong>BNP won the election, but differently.</strong> 211 seats to Jamaat's 67 — BNP by 30-point landslides, Jamaat by 13-point squeakers (19 wins under 5 pts).</li>
+      <li><strong>Women enlarge Jamaat's bloc.</strong> On women's votes alone, Jamaat leads 55 seats vs 46 on men's — and 11 seats flip BNP→Jamaat when only women vote.</li>
+      <li><strong>Women mattered most exactly where Jamaat won.</strong> In its won seats the female advantage was +3.7 pts — over 2½× the average — turning a 49% male plurality into a 53% female majority.</li>
+    </ul>
+  </section>
+
+  <footer>
+    <p><strong>Method.</strong> Gender figures are computed from <strong>2,453 same-station pairs</strong> — a men's centre matched to
+    the women's centre in the same building (exact + fuzzy name match) within a constituency — so every men-vs-women comparison
+    holds location constant. Per-constituency charts use seats with ≥4 pairs (210 seats); district charts use ≥6 pairs. Single-sex
+    centres are 26% of all 42,382 centres (25% of the electorate); the rest are mixed and can't be split by sex. Seat winners and
+    national vote shares (BNP 211/50.1%, Jamaat 67/31.5%) come from the full <code>election_results.csv</code>, not the pairs.
+    Source: <code>male_female_centers.csv</code>, <code>election_results.csv</code>. Symbols: ধানের শীষ = BNP, দাঁড়িপাল্লা = Jamaat-e-Islami,
+    হাতপাখা = Islami Andolan, শাপলা কলি = NCP. Shares are of valid votes.</p>
+  </footer>
+
+</div>
+
+<div class="tt" id="tt"></div>
+
+<script>
+const tt = document.getElementById('tt');
+function showTT(html, e){ tt.innerHTML = html; tt.style.opacity = 1; moveTT(e); }
+function moveTT(e){
+  const pad = 14; let x = e.clientX + pad, y = e.clientY + pad;
+  const r = tt.getBoundingClientRect();
+  if (x + r.width > innerWidth - 8) x = e.clientX - r.width - pad;
+  if (y + r.height > innerHeight - 8) y = e.clientY - r.height - pad;
+  tt.style.left = x + 'px'; tt.style.top = y + 'px';
+}
+function hideTT(){ tt.style.opacity = 0; }
+
+const SVGNS = 'http://www.w3.org/2000/svg';
+function el(name, attrs){ const n = document.createElementNS(SVGNS, name); for (const k in attrs) n.setAttribute(k, attrs[k]); return n; }
+function cssv(v){ return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }
+
+let DATA = null;
+
+/* ---------- Chart 1: grouped bars (shares) ---------- */
+function drawShares(){
+  const host = document.getElementById('c-shares'); host.innerHTML='';
+  const W=880, H=340, mL=44, mR=16, mT=14, mB=42;
+  const groups = DATA.shares.labels;              // [BNP, Jamaat]
+  const maxV = 60;
+  const svg = el('svg',{viewBox:`0 0 ${W} ${H}`,role:'img'});
+  const plotW=W-mL-mR, plotH=H-mT-mB;
+  const y = v => mT + plotH - (v/maxV)*plotH;
+  // gridlines
+  for(let g=0; g<=60; g+=15){
+    svg.appendChild(el('line',{x1:mL,x2:W-mR,y1:y(g),y2:y(g),class:'tick-line'}));
+    svg.appendChild(el('text',{x:mL-8,y:y(g)+4,'text-anchor':'end',class:'axis-label'})).textContent=g+'%';
+  }
+  const gw = plotW/groups.length;
+  const barW = 74, gap=20;
+  groups.forEach((grp,i)=>{
+    const cx = mL + gw*i + gw/2;
+    const men = DATA.shares.men[i], women = DATA.shares.women[i];
+    const pairs = [['Men',men,cssv('--men')],['Women',women,cssv('--women')]];
+    const totalW = barW*2+gap;
+    pairs.forEach((p,j)=>{
+      const bx = cx - totalW/2 + j*(barW+gap);
+      const bh = (p[1]/maxV)*plotH;
+      const rect = el('rect',{x:bx,y:y(p[1]),width:barW,height:bh,rx:4,fill:p[2]});
+      rect.style.cursor='pointer';
+      rect.addEventListener('mousemove',e=>showTT(`<b>${grp} — ${p[0]}'s centres</b><br>${p[1].toFixed(1)}% of valid votes`,e));
+      rect.addEventListener('mouseleave',hideTT);
+      svg.appendChild(rect);
+      svg.appendChild(el('text',{x:bx+barW/2,y:y(p[1])-8,'text-anchor':'middle',class:'val-label'})).textContent=p[1].toFixed(1);
+    });
+    svg.appendChild(el('text',{x:cx,y:H-14,'text-anchor':'middle',class:'cat-label',style:'font-size:15px;font-weight:700'})).textContent=grp;
+  });
+  svg.appendChild(el('line',{x1:mL,x2:W-mR,y1:y(0),y2:y(0),class:'baseline'}));
+  host.appendChild(svg);
+}
+
+/* ---------- Chart 2: dumbbell shift ---------- */
+function drawShift(){
+  const host=document.getElementById('c-shift'); host.innerHTML='';
+  const rows = DATA.shift;
+  const W=880, rowH=54, mT=10, mB=34, mL=140, mR=60;
+  const H = mT+mB+rows.length*rowH;
+  const maxV=52;
+  const svg=el('svg',{viewBox:`0 0 ${W} ${H}`});
+  const plotW=W-mL-mR;
+  const x=v=>mL+(v/maxV)*plotW;
+  for(let g=0;g<=50;g+=10){
+    svg.appendChild(el('line',{x1:x(g),x2:x(g),y1:mT,y2:H-mB,class:'tick-line'}));
+    svg.appendChild(el('text',{x:x(g),y:H-mB+18,'text-anchor':'middle',class:'axis-label'})).textContent=g+'%';
+  }
+  rows.forEach((r,i)=>{
+    const cy=mT+rowH*i+rowH/2;
+    const gain = r.shift>0.05;
+    svg.appendChild(el('text',{x:mL-14,y:cy+4,'text-anchor':'end',class:'cat-label',style:'font-size:13.5px'})).textContent=r.party;
+    // connector
+    svg.appendChild(el('line',{x1:x(r.m),x2:x(r.f),y1:cy,y2:cy,stroke:gain?cssv('--accent'):cssv('--baseline'),'stroke-width':gain?3:2.5,'stroke-linecap':'round'}));
+    // men dot
+    const dm=el('circle',{cx:x(r.m),cy:cy,r:6.5,fill:cssv('--men'),stroke:cssv('--surface'),'stroke-width':2});
+    // women dot
+    const dw=el('circle',{cx:x(r.f),cy:cy,r:6.5,fill:cssv('--women'),stroke:cssv('--surface'),'stroke-width':2});
+    [ ['Men',r.m,dm],['Women',r.f,dw] ].forEach(d=>{
+      d[2].style.cursor='pointer';
+      d[2].addEventListener('mousemove',e=>showTT(`<b>${r.party} — ${d[0]}</b><br>${d[1].toFixed(1)}%<br>Shift: ${r.shift>0?'+':''}${r.shift.toFixed(1)} pts`,e));
+      d[2].addEventListener('mouseleave',hideTT);
+      svg.appendChild(d[2]);
+    });
+    // shift label at end
+    const endX = Math.max(x(r.m),x(r.f))+14;
+    const t=el('text',{x:endX,y:cy+4,class:'val-label',style:`font-size:12.5px;fill:${gain?cssv('--accent'):cssv('--muted')}`});
+    t.textContent=(r.shift>0?'+':'')+r.shift.toFixed(1);
+    svg.appendChild(t);
+  });
+  host.appendChild(svg);
+}
+
+/* ---------- Chart 3: belt grouped bars ---------- */
+function drawBelt(){
+  const host=document.getElementById('c-belt'); host.innerHTML='';
+  const W=880,H=320,mL=44,mR=16,mT=14,mB=48;
+  const rows=DATA.belt, maxV=60;
+  const svg=el('svg',{viewBox:`0 0 ${W} ${H}`});
+  const plotW=W-mL-mR, plotH=H-mT-mB;
+  const y=v=>mT+plotH-(v/maxV)*plotH;
+  for(let g=0;g<=60;g+=15){
+    svg.appendChild(el('line',{x1:mL,x2:W-mR,y1:y(g),y2:y(g),class:'tick-line'}));
+    svg.appendChild(el('text',{x:mL-8,y:y(g)+4,'text-anchor':'end',class:'axis-label'})).textContent=g+'%';
+  }
+  // 50% majority reference
+  svg.appendChild(el('line',{x1:mL,x2:W-mR,y1:y(50),y2:y(50),stroke:cssv('--women'),'stroke-width':1,'stroke-dasharray':'5 4',opacity:.5}));
+  svg.appendChild(el('text',{x:W-mR,y:y(50)-6,'text-anchor':'end',class:'axis-label',style:'fill:var(--women)'})).textContent='50% majority';
+  const gw=plotW/rows.length, barW=78,gap=22;
+  rows.forEach((r,i)=>{
+    const cx=mL+gw*i+gw/2, totalW=barW*2+gap;
+    [['Men',r.m,cssv('--men')],['Women',r.f,cssv('--women')]].forEach((p,j)=>{
+      const bx=cx-totalW/2+j*(barW+gap), bh=(p[1]/maxV)*plotH;
+      const rect=el('rect',{x:bx,y:y(p[1]),width:barW,height:bh,rx:4,fill:p[2]});
+      rect.style.cursor='pointer';
+      rect.addEventListener('mousemove',e=>showTT(`<b>${r.region} — ${p[0]}</b><br>Jamaat ${p[1].toFixed(1)}%`,e));
+      rect.addEventListener('mouseleave',hideTT);
+      svg.appendChild(rect);
+      svg.appendChild(el('text',{x:bx+barW/2,y:y(p[1])-8,'text-anchor':'middle',class:'val-label'})).textContent=p[1].toFixed(1);
+    });
+    svg.appendChild(el('text',{x:cx,y:H-16,'text-anchor':'middle',class:'cat-label',style:'font-size:14px;font-weight:700'})).textContent=r.region;
+  });
+  svg.appendChild(el('line',{x1:mL,x2:W-mR,y1:y(0),y2:y(0),class:'baseline'}));
+  host.appendChild(svg);
+}
+
+/* ---------- Chart 4: top constituencies dumbbell ---------- */
+function drawTop(){
+  const host=document.getElementById('c-top'); host.innerHTML='';
+  const rows=DATA.top_const;
+  const W=880,rowH=38,mT=10,mB=34,mL=120,mR=54;
+  const H=mT+mB+rows.length*rowH, maxV=80,minV=30;
+  const svg=el('svg',{viewBox:`0 0 ${W} ${H}`});
+  const plotW=W-mL-mR;
+  const x=v=>mL+((v-minV)/(maxV-minV))*plotW;
+  for(let g=30;g<=80;g+=10){
+    svg.appendChild(el('line',{x1:x(g),x2:x(g),y1:mT,y2:H-mB,class:'tick-line'}));
+    svg.appendChild(el('text',{x:x(g),y:H-mB+18,'text-anchor':'middle',class:'axis-label'})).textContent=g+'%';
+  }
+  rows.forEach((r,i)=>{
+    const cy=mT+rowH*i+rowH/2;
+    svg.appendChild(el('text',{x:mL-14,y:cy+4,'text-anchor':'end',class:'cat-label'})).textContent=r.name;
+    svg.appendChild(el('line',{x1:x(r.m),x2:x(r.f),y1:cy,y2:cy,stroke:cssv('--accent'),'stroke-width':3,'stroke-linecap':'round',opacity:.85}));
+    const dm=el('circle',{cx:x(r.m),cy:cy,r:6,fill:cssv('--men'),stroke:cssv('--surface'),'stroke-width':2});
+    const dw=el('circle',{cx:x(r.f),cy:cy,r:6,fill:cssv('--women'),stroke:cssv('--surface'),'stroke-width':2});
+    [['Men',r.m,dm],['Women',r.f,dw]].forEach(d=>{
+      d[2].style.cursor='pointer';
+      d[2].addEventListener('mousemove',e=>showTT(`<b>${r.name} — ${d[0]}</b><br>Jamaat ${d[1].toFixed(1)}%<br>Advantage: +${r.adv.toFixed(1)} pts`,e));
+      d[2].addEventListener('mouseleave',hideTT);
+      svg.appendChild(d[2]);
+    });
+    svg.appendChild(el('text',{x:x(r.f)+14,y:cy+4,class:'val-label',style:'font-size:12px;fill:var(--accent)'})).textContent='+'+r.adv.toFixed(1);
+  });
+  host.appendChild(svg);
+}
+
+/* ---------- Chart 5: scatter ---------- */
+function drawScatter(){
+  const host=document.getElementById('c-scatter'); host.innerHTML='';
+  const pts=DATA.scatter.filter(p=>p.x>0.5||p.y>0.5);
+  const W=880,H=560,mL=48,mR=20,mT=18,mB=48,maxV=80;
+  const svg=el('svg',{viewBox:`0 0 ${W} ${H}`});
+  const plotW=W-mL-mR, plotH=H-mT-mB;
+  const x=v=>mL+(v/maxV)*plotW, y=v=>mT+plotH-(v/maxV)*plotH;
+  for(let g=0;g<=80;g+=20){
+    svg.appendChild(el('line',{x1:x(g),x2:x(g),y1:mT,y2:mT+plotH,class:'tick-line'}));
+    svg.appendChild(el('line',{x1:mL,x2:mL+plotW,y1:y(g),y2:y(g),class:'tick-line'}));
+    svg.appendChild(el('text',{x:x(g),y:H-mB+18,'text-anchor':'middle',class:'axis-label'})).textContent=g+'%';
+    if(g>0) svg.appendChild(el('text',{x:mL-8,y:y(g)+4,'text-anchor':'end',class:'axis-label'})).textContent=g+'%';
+  }
+  // diagonal equality line
+  svg.appendChild(el('line',{x1:x(0),y1:y(0),x2:x(maxV),y2:y(maxV),stroke:cssv('--baseline'),'stroke-width':1.5,'stroke-dasharray':'6 5'}));
+  svg.appendChild(el('text',{x:x(72)+2,y:y(76),class:'axis-label',style:'font-style:italic'})).textContent='equal support';
+  // axis titles
+  svg.appendChild(el('text',{x:mL+plotW/2,y:H-6,'text-anchor':'middle',class:'axis-label',style:'font-weight:700;fill:var(--men)'})).textContent='Jamaat % — men’s centres →';
+  const yt=el('text',{x:14,y:mT+plotH/2,'text-anchor':'middle',class:'axis-label',style:'font-weight:700;fill:var(--women)',transform:`rotate(-90 14 ${mT+plotH/2})`});
+  yt.textContent='Jamaat % — women’s centres →'; svg.appendChild(yt);
+  // points
+  pts.forEach(p=>{
+    const above=p.y>p.x+0.3;
+    const c=el('circle',{cx:x(p.x),cy:y(p.y),r:4.5,fill:above?cssv('--women'):cssv('--men'),'fill-opacity':.62,stroke:cssv('--surface'),'stroke-width':1});
+    c.style.cursor='pointer';
+    c.addEventListener('mousemove',e=>{c.setAttribute('r',6.5);c.setAttribute('fill-opacity',.95);showTT(`<b>${p.n}</b><br>Men: ${p.x.toFixed(1)}% · Women: ${p.y.toFixed(1)}%<br>${(p.y-p.x>=0?'+':'')}${(p.y-p.x).toFixed(1)} pts among women`,e);});
+    c.addEventListener('mouseleave',e=>{c.setAttribute('r',4.5);c.setAttribute('fill-opacity',.62);hideTT();});
+    svg.appendChild(c);
+  });
+  host.appendChild(svg);
+}
+
+/* ---------- Chart 6: district diverging bars ---------- */
+function drawDistrict(){
+  const host=document.getElementById('c-district'); host.innerHTML='';
+  const rows=DATA.districts.slice().sort((a,b)=>b.adv-a.adv);
+  const W=880,rowH=22,mT=8,mB=28,mL=132,mR=40;
+  const H=mT+mB+rows.length*rowH;
+  const maxAbs=Math.max(...rows.map(r=>Math.abs(r.adv)))*1.1;
+  const svg=el('svg',{viewBox:`0 0 ${W} ${H}`});
+  const plotW=W-mL-mR, zero=mL+plotW/2;
+  const x=v=>zero+(v/maxAbs)*(plotW/2);
+  for(let g=-6;g<=6;g+=2){
+    svg.appendChild(el('line',{x1:x(g),x2:x(g),y1:mT,y2:H-mB,class:'tick-line'}));
+    svg.appendChild(el('text',{x:x(g),y:H-mB+16,'text-anchor':'middle',class:'axis-label'})).textContent=(g>0?'+':'')+g;
+  }
+  svg.appendChild(el('line',{x1:zero,x2:zero,y1:mT,y2:H-mB,class:'baseline'}));
+  rows.forEach((r,i)=>{
+    const cy=mT+rowH*i, pos=r.adv>=0;
+    const bw=Math.abs(x(r.adv)-zero);
+    const rect=el('rect',{x:pos?zero:zero-bw,y:cy+3,width:Math.max(bw,0.5),height:rowH-7,rx:2.5,fill:pos?cssv('--accent'):cssv('--men')});
+    rect.style.cursor='pointer';
+    rect.addEventListener('mousemove',e=>showTT(`<b>${r.name}</b><br>Men ${r.m.toFixed(1)}% · Women ${r.f.toFixed(1)}%<br>${pos?'+':''}${r.adv.toFixed(1)} pts among women`,e));
+    rect.addEventListener('mouseleave',hideTT);
+    svg.appendChild(rect);
+    svg.appendChild(el('text',{x:mL-10,y:cy+rowH/2+4,'text-anchor':'end',class:'cat-label',style:'font-size:11.5px'})).textContent=r.name;
+    svg.appendChild(el('text',{x:pos?x(r.adv)+6:x(r.adv)-6,y:cy+rowH/2+4,'text-anchor':pos?'start':'end',class:'val-label',style:'font-size:11px;fill:var(--ink-2)'})).textContent=(pos?'+':'')+r.adv.toFixed(1);
+  });
+  host.appendChild(svg);
+}
+
+/* ---------- Chart 7: seats won + vote share ---------- */
+function drawSeats(){
+  const host=document.getElementById('c-seats'); if(!host||!WIN) return; host.innerHTML='';
+  const W=880,H=250,mL=90,mR=90,mT=8,mB=8;
+  const svg=el('svg',{viewBox:`0 0 ${W} ${H}`});
+  const rowsData=[
+    {label:'Seats won (of 297)', unit:'', parts:[['BNP',WIN.seats.BNP,cssv('--bnp')],['Jamaat',WIN.seats.Jamaat,cssv('--jam')],
+      ['Others',WIN.seats.NCP+WIN.seats['Islami Andolan']+WIN.seats.Other,cssv('--other-c')]], total:297},
+    {label:'National vote share', unit:'%', parts:[['BNP',WIN.vote_share.BNP,cssv('--bnp')],['Jamaat',WIN.vote_share.Jamaat,cssv('--jam')],
+      ['Others',100-WIN.vote_share.BNP-WIN.vote_share.Jamaat,cssv('--other-c')]], total:100},
+  ];
+  const barH=54, gap=64, plotW=W-mL-mR;
+  rowsData.forEach((row,i)=>{
+    const cy=mT+40+i*(barH+gap);
+    svg.appendChild(el('text',{x:mL,y:cy-12,class:'cat-label',style:'font-size:13.5px;font-weight:700'})).textContent=row.label;
+    let x=mL;
+    row.parts.forEach(p=>{
+      const w=(p[1]/row.total)*plotW;
+      const rect=el('rect',{x:x+1,y:cy,width:Math.max(w-2,1),height:barH,rx:4,fill:p[2]});
+      rect.style.cursor='pointer';
+      rect.addEventListener('mousemove',e=>showTT(`<b>${p[0]}</b><br>${row.unit==='%'?p[1].toFixed(1)+'% of votes':p[1]+' seats'}`,e));
+      rect.addEventListener('mouseleave',hideTT);
+      svg.appendChild(rect);
+      if(w>52){
+        svg.appendChild(el('text',{x:x+w/2,y:cy+barH/2-3,'text-anchor':'middle',style:'fill:#fff;font-size:16px;font-weight:800'}))
+          .textContent=row.unit==='%'?p[1].toFixed(1):p[1];
+        svg.appendChild(el('text',{x:x+w/2,y:cy+barH/2+15,'text-anchor':'middle',style:'fill:rgba(255,255,255,.85);font-size:11px;font-weight:600'}))
+          .textContent=p[0];
+      }
+      x+=w;
+    });
+  });
+  host.appendChild(svg);
+}
+
+/* ---------- Chart 8: won-seat margins ---------- */
+function drawMargin(){
+  const host=document.getElementById('c-margin'); if(!host||!WIN) return; host.innerHTML='';
+  const W=880,H=300,mL=150,mR=70,mT=16,mB=34;
+  const svg=el('svg',{viewBox:`0 0 ${W} ${H}`});
+  const plotW=W-mL-mR, maxV=60;
+  const x=v=>mL+(v/maxV)*plotW;
+  for(let g=0;g<=60;g+=15){
+    svg.appendChild(el('line',{x1:x(g),x2:x(g),y1:mT,y2:H-mB,class:'tick-line'}));
+    svg.appendChild(el('text',{x:x(g),y:H-mB+18,'text-anchor':'middle',class:'axis-label'})).textContent=g+'%';
+  }
+  const rows=[['In BNP-won seats (211)',WIN.won_margin.BNP,cssv('--bnp')],
+             ['In Jamaat-won seats (67)',WIN.won_margin.Jamaat,cssv('--jam')]];
+  const rowH=110;
+  rows.forEach((r,i)=>{
+    const cy=mT+40+i*rowH, m=r[1];
+    svg.appendChild(el('text',{x:mL-14,y:cy-16,'text-anchor':'end',class:'cat-label',style:'font-size:13px;font-weight:700'})).textContent=r[0];
+    // connector = margin
+    svg.appendChild(el('line',{x1:x(m.runnerup),x2:x(m.share),y1:cy,y2:cy,stroke:r[2],'stroke-width':3,'stroke-linecap':'round',opacity:.5}));
+    // runner-up dot
+    const dr=el('circle',{cx:x(m.runnerup),cy:cy,r:7,fill:cssv('--muted'),stroke:cssv('--surface'),'stroke-width':2});
+    // winner dot
+    const dw=el('circle',{cx:x(m.share),cy:cy,r:8,fill:r[2],stroke:cssv('--surface'),'stroke-width':2});
+    dr.style.cursor=dw.style.cursor='pointer';
+    dr.addEventListener('mousemove',e=>showTT(`<b>Runner-up</b><br>${m.runnerup}% average`,e)); dr.addEventListener('mouseleave',hideTT);
+    dw.addEventListener('mousemove',e=>showTT(`<b>Winner</b><br>${m.share}% average`,e)); dw.addEventListener('mouseleave',hideTT);
+    svg.appendChild(dr); svg.appendChild(dw);
+    // labels
+    svg.appendChild(el('text',{x:x(m.runnerup),y:cy-16,'text-anchor':'middle',class:'val-label',style:'font-size:12px;fill:var(--muted)'})).textContent=m.runnerup+'%';
+    svg.appendChild(el('text',{x:x(m.share),y:cy-18,'text-anchor':'middle',class:'val-label'})).textContent=m.share+'%';
+    // margin annotation
+    svg.appendChild(el('text',{x:(x(m.runnerup)+x(m.share))/2,y:cy+26,'text-anchor':'middle',class:'val-label',style:`font-size:13px;fill:${r[2]}`}))
+      .textContent=`+${m.margin} pt margin`;
+    svg.appendChild(el('text',{x:x(m.share)+16,y:cy+4,class:'axis-label',style:'font-size:11.5px'})).textContent=`${m.close} won by <5 pts`;
+  });
+  host.appendChild(svg);
+}
+
+/* ---------- Chart 9: two parliaments ---------- */
+function drawParl(){
+  const host=document.getElementById('c-parl'); if(!host||!WIN) return; host.innerHTML='';
+  const W=880,H=170,mL=150,mR=30,mT=10,mB=8;
+  const svg=el('svg',{viewBox:`0 0 ${W} ${H}`});
+  const g=WIN.gender_split, plotW=W-mL-mR;
+  const rows=[['If only men voted',g.men_seats.BNP,g.men_seats.Jamaat],
+             ['If only women voted',g.women_seats.BNP,g.women_seats.Jamaat]];
+  const total=rows[0][1]+rows[0][2], barH=50, gap=44;
+  rows.forEach((r,i)=>{
+    const cy=mT+24+i*(barH+gap);
+    svg.appendChild(el('text',{x:mL-14,y:cy+barH/2+4,'text-anchor':'end',class:'cat-label',style:'font-size:13px;font-weight:700'})).textContent=r[0];
+    const wb=(r[1]/total)*plotW, wj=(r[2]/total)*plotW;
+    const rb=el('rect',{x:mL,y:cy,width:wb-2,height:barH,rx:4,fill:cssv('--bnp')});
+    const rj=el('rect',{x:mL+wb,y:cy,width:wj-2,height:barH,rx:4,fill:cssv('--jam')});
+    rb.style.cursor=rj.style.cursor='pointer';
+    rb.addEventListener('mousemove',e=>showTT(`<b>BNP leads</b><br>${r[1]} seats`,e)); rb.addEventListener('mouseleave',hideTT);
+    rj.addEventListener('mousemove',e=>showTT(`<b>Jamaat leads</b><br>${r[2]} seats`,e)); rj.addEventListener('mouseleave',hideTT);
+    svg.appendChild(rb); svg.appendChild(rj);
+    svg.appendChild(el('text',{x:mL+10,y:cy+barH/2+5,style:'fill:#fff;font-size:15px;font-weight:800'})).textContent=r[1];
+    svg.appendChild(el('text',{x:mL+wb+wj-10,y:cy+barH/2+5,'text-anchor':'end',style:'fill:#fff;font-size:15px;font-weight:800'})).textContent=r[2];
+  });
+  host.appendChild(svg);
+}
+
+/* ---------- Chart 10: 16 flip seats ---------- */
+function drawFlip(){
+  const host=document.getElementById('c-flip'); if(!host||!WIN) return; host.innerHTML='';
+  const rows=WIN.flip_seats.slice().sort((a,b)=>(b.jF-b.bF)-(a.jF-a.bF));
+  const W=880,rowH=32,mT=10,mB=32,mL=110,mR=40;
+  const H=mT+mB+rows.length*rowH, minV=25,maxV=60;
+  const svg=el('svg',{viewBox:`0 0 ${W} ${H}`});
+  const plotW=W-mL-mR;
+  const x=v=>mL+((v-minV)/(maxV-minV))*plotW;
+  for(let g=30;g<=60;g+=10){
+    svg.appendChild(el('line',{x1:x(g),x2:x(g),y1:mT,y2:H-mB,class:'tick-line'}));
+    svg.appendChild(el('text',{x:x(g),y:H-mB+18,'text-anchor':'middle',class:'axis-label'})).textContent=g+'%';
+  }
+  svg.appendChild(el('line',{x1:x(50),x2:x(50),y1:mT,y2:H-mB,stroke:cssv('--baseline'),'stroke-width':1,'stroke-dasharray':'4 4'}));
+  rows.forEach((r,i)=>{
+    const cy=mT+rowH*i+rowH/2;
+    svg.appendChild(el('text',{x:mL-14,y:cy+4,'text-anchor':'end',class:'cat-label',style:'font-size:12px'})).textContent=r.name;
+    svg.appendChild(el('line',{x1:x(r.bF),x2:x(r.jF),y1:cy,y2:cy,stroke:cssv('--women'),'stroke-width':2.5,'stroke-linecap':'round',opacity:.5}));
+    const db=el('circle',{cx:x(r.bF),cy:cy,r:5.5,fill:cssv('--men'),stroke:cssv('--surface'),'stroke-width':2});
+    const dj=el('circle',{cx:x(r.jF),cy:cy,r:5.5,fill:cssv('--women'),stroke:cssv('--surface'),'stroke-width':2});
+    [['BNP',r.bF,db],['Jamaat',r.jF,dj]].forEach(d=>{
+      d[2].style.cursor='pointer';
+      d[2].addEventListener('mousemove',e=>showTT(`<b>${r.name} — women's centres</b><br>${d[0]}: ${d[1].toFixed(1)}%<br><span style="opacity:.8">Men's centres: BNP ${r.bM.toFixed(1)} · Jamaat ${r.jM.toFixed(1)}</span>`,e));
+      d[2].addEventListener('mouseleave',hideTT);
+      svg.appendChild(d[2]);
+    });
+  });
+  host.appendChild(svg);
+}
+
+/* ---------- Chart 11: female advantage by who won ---------- */
+function drawWonAdv(){
+  const host=document.getElementById('c-wonadv'); if(!host||!WADV) return; host.innerHTML='';
+  const rows=WADV.by_winner;  // Jamaat won / All / BNP won
+  const W=880,rowH=76,mT=14,mB=36,mL=190,mR=80;
+  const H=mT+mB+rows.length*rowH, maxV=5;
+  const svg=el('svg',{viewBox:`0 0 ${W} ${H}`});
+  const plotW=W-mL-mR, x=v=>mL+(v/maxV)*plotW;
+  for(let g=0;g<=5;g+=1){
+    svg.appendChild(el('line',{x1:x(g),x2:x(g),y1:mT,y2:H-mB,class:'tick-line'}));
+    svg.appendChild(el('text',{x:x(g),y:H-mB+18,'text-anchor':'middle',class:'axis-label'})).textContent='+'+g;
+  }
+  // national avg reference
+  const navg=WADV.overall;
+  svg.appendChild(el('line',{x1:x(navg),x2:x(navg),y1:mT,y2:H-mB,stroke:cssv('--muted'),'stroke-width':1,'stroke-dasharray':'4 4'}));
+  svg.appendChild(el('text',{x:x(navg),y:mT-2,'text-anchor':'middle',class:'axis-label',style:'font-size:11px'})).textContent='national avg';
+  rows.forEach((r,i)=>{
+    const cy=mT+rowH*i+rowH/2, bh=34;
+    const emph = r.grp==='Seats Jamaat won';
+    const col = emph?cssv('--jam'):(r.grp==='All seats'?'#6aa06a':'#9bbf9b');
+    svg.appendChild(el('text',{x:mL-16,y:cy-2,'text-anchor':'end',class:'cat-label',style:'font-size:13.5px;font-weight:700'})).textContent=r.grp;
+    svg.appendChild(el('text',{x:mL-16,y:cy+15,'text-anchor':'end',class:'axis-label',style:'font-size:11.5px'})).textContent=`${r.n} seats`;
+    const rect=el('rect',{x:mL,y:cy-bh/2,width:Math.max(x(r.adv)-mL,1),height:bh,rx:4,fill:col});
+    rect.style.cursor='pointer';
+    rect.addEventListener('mousemove',e=>showTT(`<b>${r.grp}</b><br>Female advantage: +${r.adv.toFixed(1)} pts<br>Jamaat: ${r.jm.toFixed(1)}% (men) → ${r.jf.toFixed(1)}% (women)`,e));
+    rect.addEventListener('mouseleave',hideTT);
+    svg.appendChild(rect);
+    svg.appendChild(el('text',{x:x(r.adv)+12,y:cy+5,class:'val-label',style:`font-size:15px;fill:${emph?cssv('--jam'):'var(--ink)'}`})).textContent='+'+r.adv.toFixed(1);
+  });
+  host.appendChild(svg);
+}
+
+function drawAll(){
+  drawShares();drawShift();drawBelt();drawTop();drawScatter();drawDistrict();
+  drawSeats();drawMargin();drawParl();drawFlip();drawWonAdv();
+}
+
+let WIN=null, WADV=null;
+Promise.all([
+  fetch('chart_data.json').then(r=>r.json()),
+  fetch('winner_data.json').then(r=>r.json()),
+  fetch('won_femadv.json').then(r=>r.json())
+]).then(([d,w,wa])=>{ DATA=d; WIN=w; WADV=wa; drawAll(); })
+  .catch(e=>{ document.getElementById('c-shares').textContent='Error loading data: '+e; });
+
+// theme toggle
+const root=document.documentElement, tgl=document.getElementById('themeToggle');
+tgl.addEventListener('click',()=>{
+  const cur=root.getAttribute('data-theme');
+  const isDark = cur ? cur==='dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+  root.setAttribute('data-theme', isDark?'light':'dark');
+  if(DATA) drawAll();
+});
+addEventListener('resize',()=>{ if(DATA) drawAll(); });
+</script>
+</body>
+</html>

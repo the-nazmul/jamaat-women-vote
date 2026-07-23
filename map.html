@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>The Map — Jamaat, BNP & the Women's Vote</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<style>
+  :root{
+    --panel:#161922; --panel-2:#1d2230; --border:#2a2f3d; --ink:#e5e7eb; --ink-2:#9aa3b2;
+    --bnp:#2a78d6; --jam:#1f9d3f; --ncp:#7a5af0; --iab:#eb6834; --other:#8b8f99;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:#0d0d0d;color:var(--ink);}
+  #map{position:fixed;inset:0;height:100vh;width:100%;background:#0d0d0d;}
+  .leaflet-container{background:#0d0d0d;}
+
+  .panel{
+    position:absolute;top:16px;left:16px;z-index:1000;width:310px;max-width:calc(100vw - 32px);
+    background:rgba(22,25,34,.94);border:1px solid var(--border);border-radius:12px;
+    padding:18px 18px 16px;box-shadow:0 12px 40px rgba(0,0,0,.5);backdrop-filter:blur(6px);
+  }
+  .back{display:inline-block;font-size:12px;color:var(--ink-2);text-decoration:none;margin-bottom:12px;}
+  .back:hover{color:var(--ink);}
+  .panel h1{font-size:18px;font-weight:800;letter-spacing:-.01em;line-height:1.2;margin-bottom:4px;}
+  .panel .sub{font-size:12.5px;color:var(--ink-2);line-height:1.45;margin-bottom:16px;}
+
+  .modes{display:flex;flex-direction:column;gap:6px;margin-bottom:16px;}
+  .mode{
+    display:flex;align-items:center;gap:9px;padding:9px 11px;border:1px solid var(--border);
+    border-radius:8px;background:var(--panel-2);cursor:pointer;font-size:13px;font-weight:600;transition:.12s;
+  }
+  .mode:hover{border-color:#3a4256;}
+  .mode.active{border-color:var(--jam);background:rgba(31,157,63,.14);color:#fff;}
+  .mode .dot{width:9px;height:9px;border-radius:50%;background:var(--ink-2);flex-shrink:0;}
+  .mode.active .dot{background:var(--jam);}
+
+  .legend{border-top:1px solid var(--border);padding-top:14px;}
+  .legend .lg-title{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2);margin-bottom:10px;}
+  .legend .row{display:flex;align-items:center;gap:9px;font-size:12.5px;color:var(--ink);margin-bottom:7px;}
+  .legend .sw{width:15px;height:15px;border-radius:4px;flex-shrink:0;border:1px solid rgba(255,255,255,.12);}
+  .legend .cnt{margin-left:auto;color:var(--ink-2);font-variant-numeric:tabular-nums;}
+
+  .detail{
+    position:absolute;top:16px;right:16px;z-index:1000;width:250px;max-width:calc(100vw - 32px);
+    background:rgba(22,25,34,.94);border:1px solid var(--border);border-radius:12px;padding:16px 18px;
+    box-shadow:0 12px 40px rgba(0,0,0,.5);backdrop-filter:blur(6px);font-size:13px;
+  }
+  .detail h3{font-size:15px;font-weight:800;margin-bottom:10px;}
+  .detail .placeholder{color:var(--ink-2);font-size:12.5px;}
+  .detail .kv{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.06);}
+  .detail .kv .k{color:var(--ink-2);} .detail .kv .v{font-weight:700;font-variant-numeric:tabular-nums;}
+  .badge{display:inline-block;padding:2px 9px;border-radius:999px;font-size:11px;font-weight:700;color:#fff;margin-top:2px;}
+  .flipnote{margin-top:10px;font-size:11.5px;color:#ffd; background:rgba(31,157,63,.16);border:1px solid rgba(31,157,63,.4);border-radius:7px;padding:7px 9px;line-height:1.4;}
+
+  .leaflet-interactive{transition:fill-opacity .1s;}
+  .detail{display:none;}   /* hidden by default; shown only when wide enough */
+  @media (min-width:900px){ .detail{display:block;} }
+  /* compact control panel for narrow / embedded widths */
+  @media (max-width:760px){
+    .panel{width:210px;padding:13px 13px 12px;top:12px;left:12px;}
+    .panel h1{font-size:15px;} .panel .sub{font-size:11px;margin-bottom:12px;}
+    .back{margin-bottom:8px;font-size:11px;}
+    .mode{padding:7px 9px;font-size:11.5px;gap:7px;}
+    .modes{gap:5px;margin-bottom:12px;}
+    .legend .row{font-size:11px;margin-bottom:5px;}
+    .legend .lg-title{font-size:10px;margin-bottom:7px;}
+    .legend .sw{width:12px;height:12px;}
+  }
+</style>
+</head>
+<body>
+<div id="map"></div>
+
+<div class="panel">
+  <a class="back" href="index.html">← Back to the analysis</a>
+  <h1>Mapping the women's vote</h1>
+  <div class="sub">Every constituency, coloured three ways. Switch the view:</div>
+  <div class="modes" id="modes">
+    <div class="mode active" data-mode="winner"><span class="dot"></span>Who won the seat</div>
+    <div class="mode" data-mode="femadv"><span class="dot"></span>Jamaat's female advantage</div>
+    <div class="mode" data-mode="jamshare"><span class="dot"></span>Jamaat vote share</div>
+    <div class="mode" data-mode="flip"><span class="dot"></span>Seats women flip to Jamaat</div>
+  </div>
+  <div class="legend" id="legend"></div>
+</div>
+
+<div class="detail" id="detail">
+  <h3>Hover a seat</h3>
+  <div class="placeholder">Move over any constituency to see its result and how men and women voted.</div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const PARTY_COLORS = {BNP:'#2a78d6', Jamaat:'#1f9d3f', NCP:'#7a5af0', 'Islami Andolan':'#eb6834', Other:'#8b8f99'};
+let DATA=null, GEO=null, layer=null, mode='winner';
+const map = L.map('map',{zoomControl:true, attributionControl:false}).setView([23.7,90.35],7);
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png',{maxZoom:14,opacity:.55}).addTo(map);
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png',{maxZoom:14,opacity:.5,pane:'shadowPane'}).addTo(map);
+
+// ---- color scales ----
+function femColor(v){
+  if(v==null) return '#3a3f4a';
+  if(v<=-2) return '#6a4bc4'; if(v<-0.5) return '#a99adf'; if(v<0.5) return '#6b7280';
+  if(v<2) return '#a7d9a0'; if(v<4) return '#5fb85a'; if(v<6) return '#2f9d3f'; return '#127a2b';
+}
+function jamColor(v){
+  if(v==null) return '#3a3f4a';
+  if(v<10) return '#e8f3e6'; if(v<20) return '#b7dfb0'; if(v<30) return '#7cc677';
+  if(v<40) return '#43ab48'; if(v<50) return '#1f8f36'; if(v<60) return '#137129'; return '#0a531c';
+}
+function colorFor(d){
+  if(!d) return '#3a3f4a';
+  if(mode==='winner') return PARTY_COLORS[d.winner]||'#8b8f99';
+  if(mode==='femadv') return femColor(d.fem_adv);
+  if(mode==='jamshare') return jamColor(d.jam);
+  if(mode==='flip'){
+    if(d.men_lead==='BNP'&&d.women_lead==='Jamaat') return '#1f9d3f';
+    if(d.men_lead==='Jamaat'&&d.women_lead==='BNP') return '#eb6834';
+    if(d.split) return '#c9a227';
+    return '#33383f';
+  }
+}
+function styleFn(f){
+  const d=DATA[String(parseInt(f.properties.constituency_id))];
+  return {fillColor:colorFor(d), fillOpacity:mode==='flip'&&!(d&&d.split)?.28:.82,
+          color:'#0d0d0d', weight:.7, opacity:1};
+}
+
+// ---- legends ----
+const LEGENDS = {
+  winner:{title:'Seat winner', rows:[
+    ['BNP',PARTY_COLORS.BNP],['Jamaat',PARTY_COLORS.Jamaat],['NCP',PARTY_COLORS.NCP],
+    ['Islami Andolan',PARTY_COLORS['Islami Andolan']],['Other / independent',PARTY_COLORS.Other]]},
+  femadv:{title:'Women minus men, Jamaat share', rows:[
+    ['Men favoured Jamaat more','#6a4bc4'],['≈ even','#6b7280'],
+    ['+0–2 pts (women)','#a7d9a0'],['+2–4 pts','#5fb85a'],['+4–6 pts','#2f9d3f'],['+6 pts or more','#127a2b']]},
+  jamshare:{title:'Jamaat vote share', rows:[
+    ['under 10%','#e8f3e6'],['10–20%','#b7dfb0'],['20–30%','#7cc677'],['30–40%','#43ab48'],
+    ['40–50%','#1f8f36'],['50–60%','#137129'],['60%+','#0a531c']]},
+  flip:{title:'If only one sex voted', rows:[
+    ['Men → BNP, Women → Jamaat','#1f9d3f'],['Men → Jamaat, Women → BNP','#eb6834'],
+    ['Same winner both sexes','#33383f']]},
+};
+function renderLegend(){
+  const L=LEGENDS[mode]; let counts={};
+  if(mode==='winner') Object.values(DATA).forEach(d=>counts[d.winner]=(counts[d.winner]||0)+1);
+  if(mode==='flip'){
+    counts['Men → BNP, Women → Jamaat']=Object.values(DATA).filter(d=>d.men_lead==='BNP'&&d.women_lead==='Jamaat').length;
+    counts['Men → Jamaat, Women → BNP']=Object.values(DATA).filter(d=>d.men_lead==='Jamaat'&&d.women_lead==='BNP').length;
+  }
+  const keymap={'BNP':'BNP','Jamaat':'Jamaat','NCP':'NCP','Islami Andolan':'Islami Andolan','Other / independent':'Other'};
+  let html=`<div class="lg-title">${L.title}</div>`;
+  L.rows.forEach(([lbl,col])=>{
+    const c = counts[keymap[lbl]] ?? counts[lbl];
+    html+=`<div class="row"><span class="sw" style="background:${col}"></span>${lbl}${c!=null?`<span class="cnt">${c}</span>`:''}</div>`;
+  });
+  document.getElementById('legend').innerHTML=html;
+}
+
+// ---- detail box ----
+function showDetail(d,name){
+  const box=document.getElementById('detail');
+  if(!d){box.innerHTML='<h3>'+name+'</h3><div class="placeholder">No result data.</div>';return;}
+  const wc=PARTY_COLORS[d.winner]||'#8b8f99';
+  let html=`<h3>${name||d.name||''}</h3>`;
+  html+=`<div class="kv"><span class="k">Winner</span><span class="v"><span class="badge" style="background:${wc}">${d.winner}</span></span></div>`;
+  html+=`<div class="kv"><span class="k">BNP share</span><span class="v" style="color:${PARTY_COLORS.BNP}">${d.bnp}%</span></div>`;
+  html+=`<div class="kv"><span class="k">Jamaat share</span><span class="v" style="color:${PARTY_COLORS.Jamaat}">${d.jam}%</span></div>`;
+  if(d.men_lead){
+    html+=`<div class="kv"><span class="k">Men's side leads</span><span class="v">${d.men_lead}</span></div>`;
+    html+=`<div class="kv"><span class="k">Women's side leads</span><span class="v">${d.women_lead}</span></div>`;
+    if(d.fem_adv!=null) html+=`<div class="kv"><span class="k">Jamaat: women − men</span><span class="v" style="color:${d.fem_adv>=0?'#3fbf5a':'#a99adf'}">${d.fem_adv>=0?'+':''}${d.fem_adv} pts</span></div>`;
+  }
+  if(d.men_lead==='BNP'&&d.women_lead==='Jamaat')
+    html+=`<div class="flipnote"><b>Women flip this seat.</b> The men's side leans BNP, but the women's side puts Jamaat ahead.</div>`;
+  box.innerHTML=html;
+}
+
+let userMoved=false;
+function frameCountry(){
+  if(!layer) return;
+  map.invalidateSize();
+  const w = map.getSize().x;
+  const leftPad = w < 760 ? 232 : 340;   // clear the control panel
+  map.fitBounds(layer.getBounds(), {
+    paddingTopLeft:  [leftPad, 20],
+    paddingBottomRight: [20, 20],
+    animate:false
+  });
+}
+map.on('dragstart', ()=>{ userMoved=true; });
+map.getContainer().addEventListener('wheel', ()=>{ userMoved=true; }, {passive:true});
+function build(){
+  if(layer) layer.remove();
+  layer=L.geoJSON(GEO,{style:styleFn,onEachFeature:(f,lyr)=>{
+    const d=DATA[String(parseInt(f.properties.constituency_id))];
+    const name=f.properties.constituency_name_en;
+    lyr.on('mouseover',()=>{lyr.setStyle({weight:2.2,color:'#fff'});lyr.bringToFront();showDetail(d,name);});
+    lyr.on('mouseout',()=>{layer.resetStyle(lyr);});
+    lyr.on('click',()=>{map.fitBounds(lyr.getBounds(),{maxZoom:10,padding:[40,40]});showDetail(d,name);});
+  }}).addTo(map);
+  renderLegend();
+  frameCountry();
+}
+// Leaflet inside a lazy/iframe container can initialise before it has its real size.
+// A ResizeObserver on the map element re-fits every time the box actually changes size,
+// until the user pans/zooms themselves.
+const ro=new ResizeObserver(()=>{
+  map.invalidateSize();
+  if(!userMoved && layer){ clearTimeout(window._rz); window._rz=setTimeout(frameCountry,80); }
+});
+ro.observe(document.getElementById('map'));
+
+document.getElementById('modes').addEventListener('click',e=>{
+  const m=e.target.closest('.mode'); if(!m) return;
+  document.querySelectorAll('.mode').forEach(x=>x.classList.remove('active'));
+  m.classList.add('active'); mode=m.dataset.mode; build();
+});
+
+Promise.all([
+  fetch('const_map_data.json').then(r=>r.json()),
+  fetch('constituencies_story.geojson').then(r=>r.json())
+]).then(([d,g])=>{DATA=d;GEO=g;build();})
+ .catch(e=>{document.getElementById('detail').innerHTML='<h3>Error</h3><div class="placeholder">'+e+'</div>';});
+</script>
+</body>
+</html>
