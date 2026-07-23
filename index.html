@@ -264,6 +264,27 @@
     </figure>
   </section>
 
+  <!-- CHART 1b: split by winner -->
+  <section class="block">
+    <div class="eyebrow">The same chart, split by winner</div>
+    <h2>In Jamaat's seats, women pull toward it — and away from the BNP</h2>
+    <p class="lede">
+      Now split those same pairs by who won the seat. In seats the BNP won, both parties look almost flat across
+      men and women. But in seats Jamaat won, the divide is sharp: women give Jamaat <strong>3.3 points more</strong>
+      than men do, and at the same time give the BNP <strong>1.9 points less</strong>. So in its own seats, women
+      do not just add to Jamaat — they also move away from the BNP.
+    </p>
+    <figure>
+      <figcaption>The same men-vs-women comparison, inside each party's won seats</figcaption>
+      <div class="fig-sub">Vote share on the men's vs women's side of matched pairs</div>
+      <div class="legend">
+        <div class="item"><span class="swatch" style="background:var(--men)"></span>Men's side</div>
+        <div class="item"><span class="swatch" style="background:var(--women)"></span>Women's side</div>
+      </div>
+      <div id="c-split"></div>
+    </figure>
+  </section>
+
   <!-- CHART 2: dumbbell shift -->
   <section class="block">
     <div class="eyebrow">Only Jamaat gained</div>
@@ -323,15 +344,22 @@
   <!-- CHART 5: scatter -->
   <section class="block">
     <div class="eyebrow">All seats at once</div>
-    <h2>Above the line, Jamaat did better with women</h2>
+    <h2>Jamaat's own seats sit highest above the line</h2>
     <p class="lede">
-      Each dot is one seat. The bottom line shows Jamaat's share among men; the side line shows its share among
-      women. A dot above the diagonal means Jamaat did better with women. <strong>Most dots sit just above the
-      line</strong> — a small gap, not a big one. The gap grows on the right side, in Jamaat's strong seats.
+      Each dot is one seat. The bottom axis is Jamaat's share among men; the up axis is its share among women.
+      A dot above the diagonal means Jamaat did better with women there. <strong>Most dots sit just above the
+      line</strong> — a small gap. But the dots are coloured by who won the seat, and <strong>the green dots — the
+      seats Jamaat won — float highest above the line</strong>. So the women's gap is biggest exactly where Jamaat
+      wins, not spread evenly.
     </p>
     <figure>
       <figcaption>Jamaat share: men's side vs. women's side, by constituency</figcaption>
       <div class="fig-sub">Each point is one of 210 constituencies with ≥4 matched pairs · dashed line = equal support</div>
+      <div class="legend">
+        <div class="item"><span class="swatch" style="background:var(--jam)"></span>Jamaat won</div>
+        <div class="item"><span class="swatch" style="background:var(--bnp)"></span>BNP won</div>
+        <div class="item"><span class="swatch" style="background:var(--other-c)"></span>Other</div>
+      </div>
       <div id="c-scatter"></div>
     </figure>
   </section>
@@ -676,16 +704,17 @@ function drawScatter(){
   svg.appendChild(el('line',{x1:x(0),y1:y(0),x2:x(maxV),y2:y(maxV),stroke:cssv('--baseline'),'stroke-width':1.5,'stroke-dasharray':'6 5'}));
   svg.appendChild(el('text',{x:x(72)+2,y:y(76),class:'axis-label',style:'font-style:italic'})).textContent='equal support';
   // axis titles
-  svg.appendChild(el('text',{x:mL+plotW/2,y:H-6,'text-anchor':'middle',class:'axis-label',style:'font-weight:700;fill:var(--men)'})).textContent='Jamaat % — men’s centres →';
-  const yt=el('text',{x:14,y:mT+plotH/2,'text-anchor':'middle',class:'axis-label',style:'font-weight:700;fill:var(--women)',transform:`rotate(-90 14 ${mT+plotH/2})`});
-  yt.textContent='Jamaat % — women’s centres →'; svg.appendChild(yt);
-  // points
+  svg.appendChild(el('text',{x:mL+plotW/2,y:H-6,'text-anchor':'middle',class:'axis-label',style:'font-weight:700'})).textContent='Jamaat % — men’s side →';
+  const yt=el('text',{x:14,y:mT+plotH/2,'text-anchor':'middle',class:'axis-label',style:'font-weight:700',transform:`rotate(-90 14 ${mT+plotH/2})`});
+  yt.textContent='Jamaat % — women’s side →'; svg.appendChild(yt);
+  const winColor={Jamaat:cssv('--jam'),BNP:cssv('--bnp'),Other:cssv('--other-c')};
+  // points — coloured by who WON the seat (independent of the axes)
   pts.forEach(p=>{
-    const above=p.y>p.x+0.3;
-    const c=el('circle',{cx:x(p.x),cy:y(p.y),r:4.5,fill:above?cssv('--women'):cssv('--men'),'fill-opacity':.62,stroke:cssv('--surface'),'stroke-width':1});
+    const col=winColor[p.w]||cssv('--other-c');
+    const c=el('circle',{cx:x(p.x),cy:y(p.y),r:4.5,fill:col,'fill-opacity':.7,stroke:cssv('--surface'),'stroke-width':1});
     c.style.cursor='pointer';
-    c.addEventListener('mousemove',e=>{c.setAttribute('r',6.5);c.setAttribute('fill-opacity',.95);showTT(`<b>${p.n}</b><br>Men: ${p.x.toFixed(1)}% · Women: ${p.y.toFixed(1)}%<br>${(p.y-p.x>=0?'+':'')}${(p.y-p.x).toFixed(1)} pts among women`,e);});
-    c.addEventListener('mouseleave',e=>{c.setAttribute('r',4.5);c.setAttribute('fill-opacity',.62);hideTT();});
+    c.addEventListener('mousemove',e=>{c.setAttribute('r',6.5);c.setAttribute('fill-opacity',.98);showTT(`<b>${p.n}</b> · ${p.w} won<br>Men: ${p.x.toFixed(1)}% · Women: ${p.y.toFixed(1)}%<br>${(p.y-p.x>=0?'+':'')}${(p.y-p.x).toFixed(1)} pts among women`,e);});
+    c.addEventListener('mouseleave',e=>{c.setAttribute('r',4.5);c.setAttribute('fill-opacity',.7);hideTT();});
     svg.appendChild(c);
   });
   host.appendChild(svg);
@@ -880,17 +909,54 @@ function drawWonAdv(){
   host.appendChild(svg);
 }
 
+/* ---------- Chart 1b: shares split by who won ---------- */
+function drawSplit(){
+  const host=document.getElementById('c-split'); if(!host||!SPLIT) return; host.innerHTML='';
+  const W=880,H=330,mT=32,mB=54,maxV=60, gap=56;
+  const panelW=(W-gap)/2, plotH=H-mT-mB;
+  const svg=el('svg',{viewBox:`0 0 ${W} ${H}`});
+  const panels=[['In seats the BNP won',SPLIT.BNP],['In seats Jamaat won',SPLIT.Jamaat]];
+  panels.forEach((pan,pi)=>{
+    const ox=pi*(panelW+gap), axPad=pi===0?36:8;
+    const mL=ox+axPad, plotW=panelW-axPad-8;
+    const y=v=>mT+plotH-(v/maxV)*plotH;
+    for(let g=0;g<=60;g+=20){
+      svg.appendChild(el('line',{x1:mL,x2:ox+panelW,y1:y(g),y2:y(g),class:'tick-line'}));
+      if(pi===0) svg.appendChild(el('text',{x:ox+28,y:y(g)+4,'text-anchor':'end',class:'axis-label'})).textContent=g+'%';
+    }
+    svg.appendChild(el('text',{x:ox+axPad+plotW/2,y:mT-14,'text-anchor':'middle',class:'cat-label',style:'font-size:13px;font-weight:700'})).textContent=pan[0];
+    const groups=[['BNP',pan[1].bnp_m,pan[1].bnp_f],['Jamaat',pan[1].jam_m,pan[1].jam_f]];
+    const gw=plotW/2, barW=34, bgap=10;
+    groups.forEach((grp,gi)=>{
+      const cx=mL+gw*gi+gw/2;
+      [['Men',grp[1],cssv('--men')],['Women',grp[2],cssv('--women')]].forEach((b,bi)=>{
+        const bx=cx-(barW*2+bgap)/2+bi*(barW+bgap), bh=(b[1]/maxV)*plotH;
+        const rect=el('rect',{x:bx,y:y(b[1]),width:barW,height:bh,rx:0,fill:b[2]});
+        rect.style.cursor='pointer';
+        rect.addEventListener('mousemove',e=>showTT(`<b>${pan[0]}</b><br>${grp[0]} — ${b[0]}: ${b[1].toFixed(1)}%`,e));
+        rect.addEventListener('mouseleave',hideTT);
+        svg.appendChild(rect);
+        svg.appendChild(el('text',{x:bx+barW/2,y:y(b[1])-6,'text-anchor':'middle',class:'val-label',style:'font-size:11px'})).textContent=b[1].toFixed(0);
+      });
+      svg.appendChild(el('text',{x:cx,y:H-mB+20,'text-anchor':'middle',class:'cat-label'})).textContent=grp[0];
+    });
+    svg.appendChild(el('line',{x1:mL,x2:ox+panelW,y1:y(0),y2:y(0),class:'baseline'}));
+  });
+  host.appendChild(svg);
+}
+
 function drawAll(){
-  drawShares();drawShift();drawBelt();drawTop();drawScatter();drawDistrict();
+  drawShares();drawSplit();drawShift();drawBelt();drawTop();drawScatter();drawDistrict();
   drawSeats();drawMargin();drawParl();drawFlip();drawWonAdv();
 }
 
-let WIN=null, WADV=null;
+let WIN=null, WADV=null, SPLIT=null;
 Promise.all([
   fetch('chart_data.json').then(r=>r.json()),
   fetch('winner_data.json').then(r=>r.json()),
-  fetch('won_femadv.json').then(r=>r.json())
-]).then(([d,w,wa])=>{ DATA=d; WIN=w; WADV=wa; drawAll(); })
+  fetch('won_femadv.json').then(r=>r.json()),
+  fetch('split_shares.json').then(r=>r.json())
+]).then(([d,w,wa,sp])=>{ DATA=d; WIN=w; WADV=wa; SPLIT=sp; drawAll(); })
   .catch(e=>{ document.getElementById('c-shares').textContent='Error loading data: '+e; });
 
 // theme toggle
