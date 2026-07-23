@@ -130,6 +130,18 @@
   .legend .item { display: flex; align-items: center; gap: 7px; font-size: 13px; color: var(--ink-2); font-weight: 600; }
   .swatch { width: 12px; height: 12px;  flex-shrink: 0; }
 
+  /* scatter filter buttons */
+  .filterbar { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 14px; }
+  .fbtn {
+    font-family: inherit; font-size: 12.5px; font-weight: 600; padding: 6px 13px;
+    border: 1px solid var(--border); background: var(--surface); color: var(--ink-2); cursor: pointer;
+  }
+  .fbtn:hover { color: var(--ink); border-color: var(--muted); }
+  .fbtn.active { background: var(--ink); color: var(--plane); border-color: var(--ink); }
+  .fbtn.active[data-f="Jamaat"] { background: var(--jam); color: #fff; border-color: var(--jam); }
+  .fbtn.active[data-f="BNP"]    { background: var(--bnp); color: #fff; border-color: var(--bnp); }
+  .fcount { font-size: 12px; color: var(--muted); margin-left: 4px; }
+
   svg { display: block; width: 100%; height: auto; overflow: visible; }
   .axis-label { fill: var(--muted); font-size: 12px; }
   .val-label { fill: var(--ink); font-size: 12.5px; font-weight: 700; }
@@ -355,10 +367,11 @@
     <figure>
       <figcaption>Jamaat share: men's side vs. women's side, by constituency</figcaption>
       <div class="fig-sub">Each point is one of 210 constituencies with ≥4 matched pairs · dashed line = equal support</div>
-      <div class="legend">
-        <div class="item"><span class="swatch" style="background:var(--jam)"></span>Jamaat won</div>
-        <div class="item"><span class="swatch" style="background:var(--bnp)"></span>BNP won</div>
-        <div class="item"><span class="swatch" style="background:var(--other-c)"></span>Other</div>
+      <div class="filterbar" id="scatter-filter">
+        <button class="fbtn active" data-f="all">All seats</button>
+        <button class="fbtn" data-f="Jamaat">Jamaat won</button>
+        <button class="fbtn" data-f="BNP">BNP won</button>
+        <span class="fcount" id="scatter-count"></span>
       </div>
       <div id="c-scatter"></div>
     </figure>
@@ -687,9 +700,13 @@ function drawTop(){
 }
 
 /* ---------- Chart 5: scatter ---------- */
+let scatterFilter='all';
 function drawScatter(){
   const host=document.getElementById('c-scatter'); host.innerHTML='';
-  const pts=DATA.scatter.filter(p=>p.x>0.5||p.y>0.5);
+  let pts=DATA.scatter.filter(p=>p.x>0.5||p.y>0.5);
+  if(scatterFilter!=='all') pts=pts.filter(p=>p.w===scatterFilter);
+  const cnt=document.getElementById('scatter-count');
+  if(cnt) cnt.textContent=`${pts.length} seats shown`;
   const W=880,H=560,mL=48,mR=20,mT=18,mB=48,maxV=80;
   const svg=el('svg',{viewBox:`0 0 ${W} ${H}`});
   const plotW=W-mL-mR, plotH=H-mT-mB;
@@ -958,6 +975,15 @@ Promise.all([
   fetch('split_shares.json').then(r=>r.json())
 ]).then(([d,w,wa,sp])=>{ DATA=d; WIN=w; WADV=wa; SPLIT=sp; drawAll(); })
   .catch(e=>{ document.getElementById('c-shares').textContent='Error loading data: '+e; });
+
+// scatter filter
+const sfBar=document.getElementById('scatter-filter');
+if(sfBar) sfBar.addEventListener('click',e=>{
+  const b=e.target.closest('.fbtn'); if(!b) return;
+  scatterFilter=b.dataset.f;
+  sfBar.querySelectorAll('.fbtn').forEach(x=>x.classList.toggle('active',x===b));
+  if(DATA) drawScatter();
+});
 
 // theme toggle
 const root=document.documentElement, tgl=document.getElementById('themeToggle');
